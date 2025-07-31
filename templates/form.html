@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create VM</title>
+</head>
+<body>
+  <h1>Create a VM</h1>
+  <form method="POST">
+    <label for="cloud">Cloud:</label>
+    <select name="cloud" required>
+      {% for cloud in clouds %}
+        <option value="{{ cloud }}" {% if cloud == selected_cloud %}selected{% endif %}>{{ cloud }}</option>
+      {% endfor %}
+    </select><br><br>
+
+    <label for="user_email">Your Email:</label>
+    <input type="email" name="user_email" required><br><br>
+
+    <label for="flavor">Flavor:</label>
+    <select name="flavor">
+      {% for f in flavors %}
+        <option value="{{ f.name }}">{{ f.name }}</option>
+      {% endfor %}
+    </select><br><br>
+
+    <label for="image">Image:</label>
+    <select name="image">
+      {% for img in images %}
+        <option value="{{ img.name }}">{{ img.name }}</option>
+      {% endfor %}
+    </select><br><br>
+
+    <label for="network">Network:</label>
+    <select name="network">
+      {% for net in networks %}
+        <option value="{{ net.name }}">{{ net.name }}</option>
+      {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Create VM</button>
+  </form>
+</body>
+</html>
