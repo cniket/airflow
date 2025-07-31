@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 export AIRFLOW_HOME=/home/ubuntu/apps/airflow
-source /home/ubuntu/apps/airflow/.airflow_env/bin/activate
+source /home/ubuntu/apps/airflow/.airflow-venv/bin/activate
 
 echo "Starting all Airflow components..."
 

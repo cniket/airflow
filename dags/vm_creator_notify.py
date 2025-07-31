@@ -11,7 +11,8 @@ import os
 import json
 from openstack.config import OpenStackConfig
 
-APPROVAL_SERVER_URL = "http://localhost:5000"  # or IP if remote
+AIRFLOW_HOST = "172.29.20.254"
+APPROVAL_SERVER_URL = f"http://{AIRFLOW_HOST}:5000"  # or IP if remote
 CLOUDS_YAML_PATH = "/home/ubuntu/apps/airflow/clouds.yaml"
 DEFAULT_CLOUD = "sa-demo-region1"
 ADMIN_EMAIL = "niket@platform9.com"

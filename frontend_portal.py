@@ -1,19 +1,29 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
+from datetime import datetime, timezone
 import openstack
 import yaml
 import os
 import requests
-from requests.auth import HTTPBasicAuth
 
 app = Flask(__name__)
+
+AIRFLOW_HOST = "172.29.20.254"
+DAG_ID = "openstack_vm_creator_approval_flow"
+JWT_TOKEN_FILE = os.path.expanduser("/home/ubuntu/apps/airflow/.jwt_token")
 CLOUDS_FILE = os.path.expanduser("/home/ubuntu/apps/airflow/clouds.yaml")
-AIRFLOW_TRIGGER_URL = "http://localhost:8080/api/v1/dags/openstack_vm_creator_approval_flow/dagRuns"
-AIRFLOW_USERNAME = "niket"
-AIRFLOW_PASSWORD = "nik123"
+
+# Airflow DAG trigger endpoint
+AIRFLOW_TRIGGER_URL = f"http://{AIRFLOW_HOST}:8080/api/v2/dags/{DAG_ID}/dagRuns"
 
 def load_clouds():
     with open(CLOUDS_FILE) as f:
         return yaml.safe_load(f).get("clouds", {})
+
+def get_jwt_token():
+    if os.path.exists(JWT_TOKEN_FILE):
+        with open(JWT_TOKEN_FILE) as f:
+            return f.read().strip()
+    return None
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -27,7 +37,7 @@ def index():
         image = request.form["image"]
         network = request.form["network"]
 
-        # Trigger Airflow DAG
+        # Construct payload for Airflow DAG
         payload = {
             "conf": {
                 "flavor": flavor,
@@ -35,21 +45,44 @@ def index():
                 "network": network,
                 "cloud": cloud,
                 "user_email": user_email
-            }
+            },
+            "logical_date": datetime.now(timezone.utc).isoformat()
         }
 
+        token = get_jwt_token()
+        if not token:
+            return "Error: JWT token not found.", 500
+
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        dag_info = requests.get(AIRFLOW_TRIGGER_URL, headers=headers)
+        if dag_info.status_code == 200:
+            is_paused = dag_info.json().get("is_paused", True)
+            print(f"DAG is paused: {is_paused}")
+            if is_paused:
+                unpause_url =  f"http://{AIRFLOW_HOST}:8080/api/v2/dags/{DAG_ID}"
+                unpause_response = requests.patch(unpause_url, headers=headers, json={"is_paused": False})
+                if unpause_response.status_code != 200:
+                    return f"Failed to unpause DAG: {unpause_response.status_code} - {unpause_response.text}", 500
+        else:
+            return f"Failed to get DAG info: {dag_info.status_code} - {dag_info.text}", 500
+
+        # Trigger the DAG run
         response = requests.post(
             AIRFLOW_TRIGGER_URL,
-            auth=HTTPBasicAuth(AIRFLOW_USERNAME, AIRFLOW_PASSWORD),
+            headers=headers,
             json=payload
         )
 
-        if response.status_code == 200:
-            return f"DAG triggered successfully! Check your email for approval."
+        if response.status_code in (200, 201):  # 201 is common for created DAG runs
+            return "DAG triggered successfully! Check your email for approval."
         else:
-            return f"Failed to trigger DAG: {response.text}", 500
+            return f"Failed to trigger DAG: {response.status_code} - {response.text}", 500
 
-    # First load: show selection UI
+    # GET method - Show dropdowns
     selected_cloud = request.args.get("cloud", cloud_names[0])
     conn = openstack.connect(cloud=selected_cloud)
 
