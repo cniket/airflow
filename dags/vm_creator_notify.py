@@ -10,12 +10,16 @@ import time
 import os
 import json
 from openstack.config import OpenStackConfig
+from dotenv import load_dotenv
 
-AIRFLOW_HOST = "172.29.20.254"
-APPROVAL_SERVER_URL = f"http://{AIRFLOW_HOST}:5000"  # or IP if remote
-CLOUDS_YAML_PATH = "/home/ubuntu/apps/airflow/clouds.yaml"
-DEFAULT_CLOUD = "sa-demo-region1"
-ADMIN_EMAIL = "niket@platform9.com"
+load_dotenv()
+
+AIRFLOW_HOST = os.getenv("AIRFLOW_HOST", "localhost")
+APPROVAL_SERVER_PORT = os.getenv("APPROVAL_SERVER_PORT", "5000")
+APPROVAL_SERVER_URL = f"http://{AIRFLOW_HOST}:{APPROVAL_SERVER_PORT}"
+CLOUDS_YAML_PATH = os.getenv("CLOUDS_YAML_PATH")
+DEFAULT_CLOUD = os.getenv("DEFAULT_CLOUD")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
 default_args = {
     "retries": 0,

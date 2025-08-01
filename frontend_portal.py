@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from datetime import datetime, timezone
 import openstack
@@ -5,15 +6,19 @@ import yaml
 import os
 import requests
 
+load_dotenv()
+
 app = Flask(__name__)
 
-AIRFLOW_HOST = "172.29.20.254"
-DAG_ID = "openstack_vm_creator_approval_flow"
-JWT_TOKEN_FILE = os.path.expanduser("/home/ubuntu/apps/airflow/.jwt_token")
-CLOUDS_FILE = os.path.expanduser("/home/ubuntu/apps/airflow/clouds.yaml")
+AIRFLOW_HOST = os.getenv("AIRFLOW_HOST")
+AIRFLOW_PORT = os.getenv("AIRFLOW_PORT", "8080")
+DAG_ID = os.getenv("DAG_ID")
+JWT_TOKEN_FILE = os.getenv("JWT_TOKEN_FILE")
+CLOUDS_FILE = os.getenv("CLOUDS_YAML_PATH")
+FRONTEND_SERVER_PORT = os.getenv("FRONTEND_SERVER_PORT", "5050")
 
 # Airflow DAG trigger endpoint
-AIRFLOW_TRIGGER_URL = f"http://{AIRFLOW_HOST}:8080/api/v2/dags/{DAG_ID}/dagRuns"
+AIRFLOW_TRIGGER_URL = f"http://{AIRFLOW_HOST}:{AIRFLOW_PORT}/api/v2/dags/{DAG_ID}/dagRuns"
 
 def load_clouds():
     with open(CLOUDS_FILE) as f:
@@ -63,7 +68,7 @@ def index():
             is_paused = dag_info.json().get("is_paused", True)
             print(f"DAG is paused: {is_paused}")
             if is_paused:
-                unpause_url =  f"http://{AIRFLOW_HOST}:8080/api/v2/dags/{DAG_ID}"
+                unpause_url =  f"http://{AIRFLOW_HOST}:{AIRFLOW_PORT}/api/v2/dags/{DAG_ID}"
                 unpause_response = requests.patch(unpause_url, headers=headers, json={"is_paused": False})
                 if unpause_response.status_code != 200:
                     return f"Failed to unpause DAG: {unpause_response.status_code} - {unpause_response.text}", 500
@@ -99,4 +104,4 @@ def index():
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5050)
+    app.run(host="0.0.0.0", port=int(FRONTEND_SERVER_PORT), debug=True)

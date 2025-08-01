@@ -1,6 +1,11 @@
 # approval_server.py
 from flask import Flask, request, jsonify
 import json, os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+APPROVAL_SERVER_PORT = os.getenv("APPROVAL_SERVER_PORT", "5000")
 
 app = Flask(__name__)
 APPROVAL_FILE = "approvals.json"
@@ -42,4 +47,4 @@ def get_approval():
     return jsonify({"status": approvals.get(dag_run_id)})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=int(APPROVAL_SERVER_PORT), debug=True)
