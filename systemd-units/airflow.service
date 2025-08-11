@@ -1,0 +1,14 @@
+[Unit]
+Description = Apache Airflow Webserver Daemon
+After = network.target
+
+[Service]
+PIDFile = /home/ubuntu/apps/airflow/airflow.PIDFile
+Environment=AIRFLOW_HOME=/home/ubuntu/apps/airflow
+Environment=PYTHONPATH=/home/ubuntu/apps/airflow
+WorkingDirectory = /home/ubuntu/apps/airflow
+ExecStart = bash /home/ubuntu/apps/airflow/run_airflow.sh
+ExecStop = /bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

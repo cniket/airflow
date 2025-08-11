@@ -1,0 +1,12 @@
+[Unit]
+Description=Flask Approval Server for Airflow VM DAG
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/apps/airflow/
+ExecStart=/home/ubuntu/apps/airflow/.airflow-venv/bin/python3 /home/ubuntu/apps/airflow/approval_server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

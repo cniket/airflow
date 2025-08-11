@@ -1,0 +1,13 @@
+[Unit]
+Description=Flask Frontend Portal to create VMs
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/apps/airflow
+ExecStart=/home/ubuntu/apps/airflow/.airflow-venv/bin/python3 /home/ubuntu/apps/airflow/frontend_portal.py
+Restart=always
+Environment=FLASK_ENV=production
+
+[Install]
+WantedBy=multi-user.target

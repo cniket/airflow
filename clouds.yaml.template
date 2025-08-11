@@ -1,13 +1,13 @@
 clouds:
-  sa-demo-region1:
+  <cloud-name>:
     auth:
       auth_url: https://<short-name>-<region-name>.app.qa-pcd.platform9.com/keystone/v3
-      project_name: service
+      project_name: <tenant-name>
       username: <your username here>
       password: <your password here>
       user_domain_name: default
       project_domain_name: default
-    region_name: Region1
+    region_name: <region-name>
     interface: public
     identity_api_version: 3
     compute_api_version: 2
