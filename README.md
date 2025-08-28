@@ -76,14 +76,15 @@ This project provides an ServiceNow-Airflow-PCD based workflow for requesting, a
 5. Access the airflow using (default: localhost-ip:8080), login with the user create above and Configured SMTP in Airflow for email notifications.
 
    `Admin --> Connections --> Add Connection`
+<img width="909" height="761" alt="Screenshot 2025-08-14 at 17 44 44" src="https://github.com/user-attachments/assets/fed67d59-7d6b-4a2b-a611-c68742b75e08" />
 
-![alt text](<Screenshot 2025-08-14 at 17.44.44.png>)
-NOTE: Add your respective SMTP host, credentials and port details. 
+NOTE: Add your respective SMTP host, credentials and port details.
 
-![alt text](<Screenshot 2025-08-14 at 17.44.58.png>)
+<img width="909" height="761" alt="Screenshot 2025-08-14 at 17 44 58" src="https://github.com/user-attachments/assets/679ef9b0-ab1d-47d8-bdc9-8b5d70fa50dd" />
+
 NOTE: In the 'From email' field add the respective emaid id as per configured SMTP. It will act as the source email id.
 
-![alt text](<Screenshot 2025-08-14 at 17.45.06.png>)
+<img width="909" height="761" alt="Screenshot 2025-08-14 at 17 45 06" src="https://github.com/user-attachments/assets/726fc48b-9789-4aa9-aa8e-2c9190e95395" />
 
 ## Usage
 
