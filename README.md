@@ -29,7 +29,7 @@ This project provides an ServiceNow-Airflow-PCD based workflow for requesting, a
    auth_manager = airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
    ```
    
-   1.3 Add JWT token secret key, again only required when authenticating to airflow API using token. For this first create two random keys and then add those keys in the `airflow.cfg`.
+   1.3 Add JWT token secret key, again only required when authenticating to airflow API using token(like from servicenow). For this first create two random keys and then add those keys in the `airflow.cfg` as below.
    ```
    $ python3 -c "import secrets; print(secrets.token_urlsafe(32))"
    BJ4_k41L1FHGVfkEWACT_HvrmI_ZOkyxT4sNPIHqG_o
@@ -77,9 +77,13 @@ This project provides an ServiceNow-Airflow-PCD based workflow for requesting, a
 
    `Admin --> Connections --> Add Connection`
 
-   Connection ID:  some-connection-name
+![alt text](<Screenshot 2025-08-14 at 17.44.44.png>)
+NOTE: Add your respective SMTP host, credentials and port details. 
 
-   Connection Type: SMTP
+![alt text](<Screenshot 2025-08-14 at 17.44.58.png>)
+NOTE: In the 'From email' field add the respective emaid id as per configured SMTP. It will act as the source email id.
+
+![alt text](<Screenshot 2025-08-14 at 17.45.06.png>)
 
 ## Usage
 
