@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
-mkdir -p apps/Airflow
-cd apps/airflow/
+mkdir apps
+cd apps
+git clone https://github.com/cniket/airflow.git
+cd airflow
 curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv .airflow-venv
 source .airflow-venv/bin/activate
 
+echo "[*] Setting up Airflow"
 export AIRFLOW_HOME=$(pwd)
 echo AIRFLOW_HOME=$AIRFLOW_HOME >> ~/.bashrc
 AIRFLOW_VERSION=3.0.4
@@ -16,9 +19,6 @@ uv pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_U
 uv pip install apache-airflow-providers-fab
 uv pip install setuptools pip flask_appbuilder flask_cors openstacksdk
 
-#uv pip install setuptools flask_appbuilder openstacksdk
-#uv pip install apache-airflow apache-airflow-providers-fab
-
 echo "[*] Configuring systemd services"
 sudo cp systemd-units/airflow.service /etc/systemd/system/
 sudo cp systemd-units/airflow-approval-server.service /etc/systemd/system/
@@ -27,6 +27,6 @@ sudo cp systemd-units/airflow-frontend-portal.service /etc/systemd/system/
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
 #sudo systemctl enable airflow.service airflow-approval-server.service airflow-frontend-portal.service
-sudo systemctl start airflow.service airflow-approval-server.service airflow-frontend-portal.service
+#sudo systemctl start airflow.service airflow-approval-server.service airflow-frontend-portal.service
 
 echo "[*] Setup complete"
